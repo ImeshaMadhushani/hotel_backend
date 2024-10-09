@@ -8,7 +8,26 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/api/user",userRouter)
+app.use("/api/user", userRouter);
+
+// Middleware to verify JWT
+
+app.use((req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer', "")
+    
+    if (!token) {
+        jwt.verify(token, "secret", (err, decoded) => {
+            if (decoded != null) {
+                req.user = decoded
+                next()
+            } else {
+                next()
+            }
+        })
+    } else {
+        next()
+    }
+});
 
 // Connect to MongoDB
 

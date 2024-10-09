@@ -4,11 +4,10 @@ import bcrypt from 'bcrypt';
 
 export function postUser(req, res) {
     const user = req.body;
-    console.log(user);
     const password = req.body.password;
     const saltRound = 10;
     const passwordHash = bcrypt.hashSync(password, saltRound);
-    console.log('Hashed Password:', passwordHash);
+    
 
     user.password = passwordHash;
 
@@ -25,27 +24,23 @@ export function postUser(req, res) {
 export function login(req, res) {
     const credentials = req.body;
 
-    User.findOne({ email: credentials.email, password: credentials.password }).then((user)=> {
-        if (!user) {
-            return res.status(401).json({ message: "Invalid email or password!" });
+    User.findOne({ email: credentials.email}).then((user)=> {
+        if (user==null) {
+            res.status(401).json({ message: "Invalid email or password!" });
         } else {
-            const isPasswordValid = bcrypt.compare(user.password, credentials.password)
+            const isPasswordValid = bcrypt.compare(credentials.password, user.password)
             if (!isPasswordValid) { 
-                return res.status(401).json({ message: "Invalid password!" });
+            res.status(401).json({ message: "Invalid password!" });
             } else {
                 const payload = {
                     id: user._id,
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    image: user.image,
-                    type: user.type,
-                    phone: user.phone,
-                    whatsapp: user.whatsapp,
-                    disabled: user.disabled,
+                    type: user.type
                 }
 
-                const token = jwt.sign(payload, 'secret', { expireIn: '48h' })
+                const token = jwt.sign(payload, 'secret', { expiresIn: '48h' })
                 res.json({ message: "User logged in successfully!",user:user, token: token });
             }
         }
