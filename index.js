@@ -2,14 +2,17 @@ import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
+import userRouter from './routes/userRoute.js';
 
 const app = express();
 
 app.use(bodyParser.json());
 
+app.use("/api/user",userRouter)
+
 // Connect to MongoDB
 
-const connectionString = "mongodb+srv://hotel:hotel@cluster0.prmky.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const connectionString = "mongodb+srv://hotel:hotel@cluster0.prmky.mongodb.net/HotelDB?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(connectionString).then(
     () => {
