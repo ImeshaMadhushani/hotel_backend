@@ -1,8 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import bodyParser from 'body-parser';
 
 const app = express();
+
+app.use(bodyParser.json());
 
 // Connect to MongoDB
 
