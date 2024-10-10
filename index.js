@@ -3,19 +3,21 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
 import userRouter from './routes/userRoute.js';
+import galleryRouter from './routes/galleryRoute.js';
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use("/api/user", userRouter);
+app.use("/api/gallery",galleryRouter);
 
 // Middleware to verify JWT
 
 app.use((req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer', "")
     
-    if (!token) {
+    if (token != null) {
         jwt.verify(token, "secret", (err, decoded) => {
             if (decoded != null) {
                 req.user = decoded
