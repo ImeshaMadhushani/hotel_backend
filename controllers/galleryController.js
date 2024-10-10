@@ -26,3 +26,16 @@ export function createGallery(req, res) {
         
    
 }
+
+export function getGalleryItem(req, res) {
+    Gallery.find()
+        .then((list) => {
+            res.json({
+                list: list
+            });
+        })
+        .catch(() => {
+            res.status(500).json({ message: "Failed to retrieve gallery items." });
+        });
+} 
+
