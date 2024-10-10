@@ -22,3 +22,10 @@ export function createCategory(req, res) {
 }
 
 
+export function getCategory(req, res) { 
+    Category.find().then((categories) => {
+        res.json(categories);
+    }).catch((error) => {
+        res.status(500).json({ message: error.message });
+    });
+}
