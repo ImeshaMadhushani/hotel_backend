@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 
 // Connect to MongoDB
 
-const connectionString = "mongodb+srv://hotel:hotel@cluster0.prmky.mongodb.net/HotelDB?retryWrites=true&w=majority&appName=Cluster0";
+const connectionString = process.env.MONGO_URL
 
 mongoose.connect(connectionString).then(
     () => {

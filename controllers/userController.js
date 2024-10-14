@@ -40,9 +40,33 @@ export function login(req, res) {
                     type: user.type
                 }
 
-                const token = jwt.sign(payload, 'secret', { expiresIn: '48h' })
+                const token = jwt.sign(payload, process.enc.JWT_KEY, { expiresIn: '48h' })
                 res.json({ message: "User logged in successfully!",user:user, token: token });
             }
         }
     })
+}
+
+export function isAdminValid(req){
+    if (req.user == null) { 
+        return false;
+    }
+    
+    if (req.user.type!= "admin") {
+        return false;
+    }
+    
+    return true;
+}
+
+export function isCustomerValid(req) {
+    if (req.user == null) {
+        return false;
+    }
+    
+    if (req.user.type!= "customer") {
+        return false;
+    }
+    
+    return true;
 }
