@@ -2,46 +2,46 @@ import mongoose from "mongoose";
 
 const roomSchema = mongoose.Schema(
     {
-        roomNumber: {
+        roomId: {
             type: Number,
-            required: true
+            required: true,
+            unique: true
         },
 
         category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Category",
+            type: String,
             required: true
         },
 
-        booked: {
+        maxGuests: {
+            type: Number,
+            required: true,
+            default: 3
+        },
+
+        available: {
             type: Boolean,
-            default: false
+            required: true,
+            default: true
         },
 
-        bookedFrom: {
-            type: Date
-        },
-
-        bookedTo: {
-            type: Date
-        },
-
-        images: [
+        photos: [
             {
                 type: String
             }
         ],
 
-        available: {
-            type: Boolean,
-            default: true
+        specialDescription: {
+            type: String,
+            default: ""
         },
 
-        price: {
-            type: Number,
-            required: true
+        notes: {
+            type: String,
+            default: ""
         }
-        
+
+
     }
 )
 

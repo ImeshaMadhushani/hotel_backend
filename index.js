@@ -17,19 +17,19 @@ app.use("/api/category", categoryRouter);
 // Middleware to verify JWT
 
 app.use((req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer', "")
+    const token = req.header['authorization']?.replace('Bearer ', "")
     
-    if (token != null) {
+    if (token) {
         jwt.verify(token, "secret", (err, decoded) => {
             if (decoded != null) {
                 req.user = decoded
-                next()
+                next();
             } else {
-                next()
+                next();
             }
-        })
+        });
     } else {
-        next()
+        next();
     }
 });
 

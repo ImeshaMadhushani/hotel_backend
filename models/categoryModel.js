@@ -4,12 +4,8 @@ const categorySchema = mongoose.Schema(
     {
         name: {
             type: String,
-            required: true
-        },
-
-        description: {
-            type: String,
-            required: true
+            required: true,
+            unique: true
         },
 
         price: {
@@ -17,14 +13,25 @@ const categorySchema = mongoose.Schema(
             required: true
         },
 
-        roomtype: {
+        features: [
+            {
+                type: String,
+            }
+        ],
+
+        description: {
             type: String,
-            required: true,
-            enum: ['Standard', 'Deluxe', 'Luxury']
+            required: true
+        },
+
+        image: {
+            type: String,
+
         }
+
     }    
 )
 
-const Category = mongoose.model("Category", categorySchema);
+const Category = mongoose.model("category", categorySchema);
 
 export default Category;

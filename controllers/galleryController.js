@@ -1,6 +1,5 @@
 import Gallery from "../models/galleryModel.js"
 
-
 export function createGallery(req, res) {
 
     const user = req.user;
@@ -18,15 +17,16 @@ export function createGallery(req, res) {
         const gallery = req.body.item;
         const newGalleryItem = new Gallery(gallery);
 
-        newGalleryItem.save().then(() => {
-            res.status(201).json({ message: "Gallery created successfully!" });
-        }).catch(() => {
-            res.status(500).json({ message: "Gallery Item Creation Failed..!!!"});
-        })
+    newGalleryItem.save().then((result) => {
+        res.status(201).json({ message: "Gallery item created successfully!", result:result });
+    }).catch((err) => { 
+        res.status(500).json({ message: "Failed to create gallery item.", error: err.message });
+     });
+    
         
    
 }
-
+ 
 export function getGalleryItem(req, res) {
     Gallery.find()
         .then((list) => {

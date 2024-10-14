@@ -19,6 +19,6 @@ const gallerySchema= mongoose.Schema(
     }
 )
 
-const Gallery = mongoose.model("Gallery", gallerySchema);
+const Gallery = mongoose.model("gallery", gallerySchema);
 
 export default Gallery;
