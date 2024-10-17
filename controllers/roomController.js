@@ -25,7 +25,7 @@ export function deleteRoom(req, res) {
 
     const roomId = req.params.roomId;
 
-    Room.findByIdAndDelete({ roomId: roomId }).then(
+    Room.findOneAndDelete({ roomId: roomId }).then(
         (result) => {
             if (!result) {
                 return res.status(404).json({ message: "Room not found!" });
@@ -102,27 +102,30 @@ export function updateRoom(req, res) {
         res.status(403).json({
             message: "Unauthorized to update a room"
         })
-        return;
+       return;
     }
-    const roomId = req.params.roomId;
+    const roomId = Number(req.params.roomId);
+    
 
-    Room.findByIdAndUpdate({ roomId: roomId }, req.body, { new: true }).then(
-        (result) => {
+    Room.findOneAndUpdate({ roomId: roomId }, req.body, { new: true })
+        .then((result) => {
             if (!result) {
                 res.status(404).json({
                     message: "Room not found"
                 });
                 return;
-            } else {
-                res.json({
-                    message: "Room updated successfully",
-                    result: result
-                })
+            }  else { 
+            res.json({
+                message: "Room updated successfully",
+                result: result
+            });
             }
-        }).catch({
-            message: "Failed to update room",
-            error: err
-        })
+        }).catch((err) => {
+            res.status(500).json({
+                message: "Failed to update room",
+                error: err.message
+            });
+        });
 
 } 
 

@@ -7,35 +7,42 @@ import galleryRouter from './routes/galleryRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
 import roomRouter from './routes/roomRoute.js';
 import bookingRouter from './routes/bookingRoute.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/api/user", userRouter);
-app.use("/api/gallery", galleryRouter);
-app.use("/api/category", categoryRouter);
-app.use("/api/rooms", roomRouter)
-app.use("api/booking",bookingRouter)
 
 // Middleware to verify JWT
 
 app.use((req, res, next) => {
-    const token = req.header['authorization']?.replace('Bearer ', "")
-    
+    const token = req.headers['authorization']?.replace('Bearer ', "")
+
     if (token) {
-        jwt.verify(token, "secret", (err, decoded) => {
-            if (decoded != null) {
-                req.user = decoded
-                next();
-            } else {
-                next();
+        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+            if (err) {
+                console.error("Token verification error:", err);
+                return res.status(401).json({ message: "Invalid token, please login again", error: err.message });
             }
+            req.user = decoded; // Attach the decoded user info to the request
+            
+            next();
         });
     } else {
         next();
+       
     }
 });
+
+app.use("/api/user", userRouter);
+app.use("/api/gallery", galleryRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/rooms", roomRouter)
+app.use("/api/booking", bookingRouter)
+
 
 // Connect to MongoDB
 
@@ -46,8 +53,8 @@ mongoose.connect(connectionString).then(
         console.log('Connected to MongoDB');
     }
 ).catch(
-    () => {
-        console.log('Failed to connect to MongoDB');
+    (error) => {
+        console.error('Failed to connect to MongoDB',error);
     } 
     )
 

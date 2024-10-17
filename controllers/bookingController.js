@@ -15,11 +15,11 @@ export function createBooking(req, res) {
     Booking.countDocuments({}).then(
         (count) => {
             console.log(count);
-            const newId = "INV" + startingId + count + 1;
+            const newId = startingId + count + 1;
             const newBooking = new Booking({
                 bookingId: newId,
-                customerId: req.body.customerId,
                 roomId: req.body.roomId,
+                email: req.user.email,
                 start: req.body.start,
                 end: req.body.end,
             })
@@ -31,8 +31,10 @@ export function createBooking(req, res) {
                     });
                 }).catch(
                     (err) => {
+                        console.error("Error creating booking:", err); // Log the error
                         res.status(500).json({
-                            message: "Booking creation failed"
+                            message: "Booking creation failed",
+                            error: err.message
                         })
                     }
                 )
@@ -40,6 +42,7 @@ export function createBooking(req, res) {
         }
     ).catch(
         (err) => {
+            
             res.status(500).json({
                 message: "Failed to fetch booking count",
                 error: err

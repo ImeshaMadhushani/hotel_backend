@@ -3,7 +3,7 @@ import Gallery from "../models/galleryModel.js"
 export function createGallery(req, res) {
 
     const user = req.user;
-
+    
     if (user == null) {
        res.status(403).json({ message: "Please  login to create gallery" })
         return; 

@@ -43,11 +43,14 @@ export function login(req, res) {
                     type: user.type
                 }
 
-                const token = jwt.sign(payload, process.enc.JWT_KEY, { expiresIn: '48h' })
-                res.json({ message: "User logged in successfully!",user:user, token: token });
+                const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '48h' });
+                return res.json({ message: "User logged in successfully!",user:user, token: token });
             }
         }
-    })
+    }).catch((error) => {
+        console.error("Error during login:", error);
+        return res.status(500).json({ message: "Server error" });
+    });
 }
 
 export function isAdminValid(req){

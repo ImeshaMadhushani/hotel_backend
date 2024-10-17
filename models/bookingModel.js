@@ -3,9 +3,14 @@ import mongoose from "mongoose";
 const bookingSchema = new mongoose.Schema(
     {
         bookingId: {
-            type: Number,
+            type: String,
             required: true,
             unique: true
+        },
+
+        roomId: {
+            type: Number,
+            required: true
         },
 
         email: {

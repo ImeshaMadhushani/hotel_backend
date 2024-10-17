@@ -1,6 +1,7 @@
 import Category from "../models/categoryModel.js";
 
 export function createCategory(req, res) {
+    const user = req.user;
 
     if (user == null) {
         return res.status(400).json({ message: "Invalid user data!" });
@@ -47,7 +48,8 @@ export function deleteCategory(req, res) {
 }
 
 export function getCategoryByName(req, res) {
-    const name = req.param.name;
+    const name = req.params.name;
+
     Category.findOne({ name: name }).then((category) => {
         if (!category) {
             return res.status(404).json({
