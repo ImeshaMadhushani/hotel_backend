@@ -3,3 +3,5 @@ package-lock.json
 user.json
 gallery.json
 category.json
+room.json
+booking.json
