@@ -1,95 +1,128 @@
-import mongoose from "mongoose";
 import Room from "../models/roomModel.js";
+import {isAdminValid} from "./userController.js"
 
 export function createRoom(req, res) {
-    const user = req.body;
-
-    if (user == null) {
-        return res.status(400).json({ message: "Invalid user data!" });
+    if (!isAdminValid(req)) {
+        res.status(403).json({ message: "Unauthorized to create room" })
+        return;
     }
-
-    if (user.type != "admin") {
-        return res.status(403).json({ message: "Only admins can create rooms!" });
-    }
-
-    const rooms = req.body.item;
-    const newRoom = Category(rooms);
-    newCategory.save().then(() => {
-        res.status(201).json({ message: "Category created successfully!" });
-    }).catch((error) => {
-        res.status(400).json({ message: error.message });
-    });
+   
+    const newRoom = new Room(req.body)
+    newRoom.save().then(
+        (result) => {
+            res.status(201).json({ message: "Room created successfully!", result: result });
+        }
+    ).catch((err) => {
+        res.status(500).json({ message: "Error creating room!", error: err.message });
+    })
 }
 
-
-export function getAllRooms(req, res) {
-    try {
-        const roomId = req.params;
-
-        const room = Room.findById(roomId).populate('category');
-
-        if (!room) {
-            return res.status(404).json({ message: "Room not found!" });
-        }
-        res.status(200).json({
-            roomNumber: room.roomNumber,
-            category: room.category,
-            price: room.price,
-            available: room.available,
-            booked: room.booked,
-            bookedFrom: room.bookedFrom,
-            bookedTo: room.bookedTo,
-            images: room.images
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Error retrieving room details", error: error.message });
+export function deleteRoom(req, res) { 
+    if (!isAdminValid(req)) {
+        res.status(403).json({ message: "Unauthorized to delete room" })
+        return;
     }
 
+    const roomId = req.params.roomId;
+
+    Room.findByIdAndDelete({ roomId: roomId }).then(
+        (result) => {
+            if (!result) {
+                return res.status(404).json({ message: "Room not found!" });
+            }
+            res.status(200).json({ message: "Room deleted successfully!" });
+        }
+    ).catch((err) => {
+        res.status(500).json({ message: "Error deleting room!", error: err.message });
+    })
 }
 
-export async function bookRoom(req, res) {
-    const roomId = req.params.id;
-    const user = req.body;
+export function findRoomById(req, res) { 
+    const roomId = req.params.roomId;
 
-    if (user == null) {
-        return res.status(400).json({ message: "Invalid user data!" });
-    }
-
-    try {
-        const { roomId, bookedFrom, bookedTo } = req.body;
-        
-        const room = await Room.findById(roomId).populate('category');
-
-        if (!room) {
-            return res.status(404).json({ message: "Room not found!" });
+    Room.findOne({ roomId: roomId }).then(
+        (result) => {
+            if (!result) {
+                return res.status(404).json({ message: "Room not found!" });
+                return;
+            } else {
+                res.json({
+                    message: "Room found successfully",
+                    result: result
+                })
+            }
         }
-        
-        if (room.booked) {
-            return res.status(400).json({ message: "Room is already booked!" });
-        } else {
-            room.booked = true;
-            room.bookedFrom = new Date(bookedFrom);
-            room.bookedTo = new Date(bookedTo);
-            room.available = false;
-
-        
-            await room.save();
-
-            return res.status(200).json({
-                message: "Room booked successfully!",
-                room: {
-                    roomNumber: room.roomNumber,
-                    category: room.category,
-                    price: room.price,
-                    bookedFrom: room.bookedFrom,
-                    bookedTo: room.bookedTo,
-                    available: room.available,
-                    images: room.images
-                }
-            });
+    ).catch(
+        (err) => {
+            res.status(500).json({ message: "Error retrieving room details", error: err});
         }
-
-    } catch (error) {
-        return res.status(500).json({ message: "Error booking room", error: error.message });
-    }
+    )
 }
+
+export function getRoom(req, res) {
+    Room.find().then(
+        (result) => {
+            res.json({message:"Rooms found successfully",result:result})
+        }
+    ).catch((err) => {
+        res.status(500).json({ message: "Error retrieving rooms", error: err});
+    
+    })
+}
+
+export function getRoomByCategory(req, res) {
+    const category = req.params.category;
+
+    Room.find({ category: category }).then(
+        (result) => {
+            if (!result) {
+                res.status(404).json({
+                    message: "No rooms found for this category"
+                });
+                return;
+            } else {
+                res.json({
+                    message: "Rooms found successfully",
+                    result: result
+                })
+            }
+        }
+    ).catch((err) => {
+        res.status(500).json({
+            message: "Failed to find rooms",
+            error: err
+        })
+    }
+    )
+}
+
+//update room
+export function updateRoom(req, res) {
+    if (!isAdminValid(req)) {
+        res.status(403).json({
+            message: "Unauthorized to update a room"
+        })
+        return;
+    }
+    const roomId = req.params.roomId;
+
+    Room.findByIdAndUpdate({ roomId: roomId }, req.body, { new: true }).then(
+        (result) => {
+            if (!result) {
+                res.status(404).json({
+                    message: "Room not found"
+                });
+                return;
+            } else {
+                res.json({
+                    message: "Room updated successfully",
+                    result: result
+                })
+            }
+        }).catch({
+            message: "Failed to update room",
+            error: err
+        })
+
+} 
+
