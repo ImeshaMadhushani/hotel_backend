@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import userRouter from './routes/userRoute.js';
 import galleryRouter from './routes/galleryRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
+import roomRouter from './routes/roomRoute.js';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 app.use("/api/user", userRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/category", categoryRouter);
+app.use("/api/rooms", roomRouter)
 
 // Middleware to verify JWT
 
