@@ -6,6 +6,7 @@ import userRouter from './routes/userRoute.js';
 import galleryRouter from './routes/galleryRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
 import roomRouter from './routes/roomRoute.js';
+import bookingRouter from './routes/bookingRoute.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/user", userRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/rooms", roomRouter)
+app.use("api/booking",bookingRouter)
 
 // Middleware to verify JWT
 

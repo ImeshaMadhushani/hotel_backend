@@ -1,5 +1,5 @@
 import Booking from "../models/bookingModel.js";
-import { isCustomerValid } from "./userControllers.js";
+import { isCustomerValid } from "./userController.js";
 
 export function createBooking(req, res) {
 
