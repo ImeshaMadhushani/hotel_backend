@@ -39,6 +39,11 @@ const roomSchema = mongoose.Schema(
         notes: {
             type: String,
             default: ""
+        },
+        price: {
+            type: Number,
+            required: true, // Set to true if price must be provided
+            min: 0 // Optional: Ensures price cannot be negative
         }
 
 

@@ -24,7 +24,7 @@ export function createCategory(req, res) {
 }
 
 export function deleteCategory(req, res) { 
-    if (user == null) {
+     if (user == null) {
         return res.status(400).json({ message: "Invalid user data!" });
         return;
     }
@@ -33,7 +33,7 @@ export function deleteCategory(req, res) {
     if (user.type!= "admin") {
         return res.status(403).json({ message: "Only admins can delete categories!" });
         return;
-    }
+    } 
     
 
     const name = req.params.name;

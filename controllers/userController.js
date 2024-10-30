@@ -2,8 +2,22 @@ import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import multer from 'multer';
+import path from 'path';
 
 dotenv.config();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Directory to store uploaded files
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname)); // Store file with unique name
+    }
+});
+
+const upload = multer({ storage: storage });
 
 export function postUser(req, res) {
     const user = req.body;
@@ -13,6 +27,11 @@ export function postUser(req, res) {
     
 
     user.password = passwordHash;
+
+    if (req.file) {
+        user.profilePic = req.file.path; // Save the profile picture path
+    }
+
 
     const newUser = new User(user)
 
@@ -75,4 +94,14 @@ export function isCustomerValid(req) {
     }
     
     return true;
+}
+ 
+export function getUser(req, res) {
+    const user = req.body.user;
+    if (user == null) {
+        return res.status(403).json({ message: "Not Found" });
+    }
+    else {
+        res.json({ message:"Found",user: user });
+    }
 }

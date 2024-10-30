@@ -8,12 +8,20 @@ import categoryRouter from './routes/categoryRoute.js';
 import roomRouter from './routes/roomRoute.js';
 import bookingRouter from './routes/bookingRoute.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
+
+
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+}));
 
 
 // Middleware to verify JWT
