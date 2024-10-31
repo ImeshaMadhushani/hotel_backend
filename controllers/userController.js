@@ -2,45 +2,45 @@ import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import multer from 'multer';
-import path from 'path';
+
 
 dotenv.config();
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Directory to store uploaded files
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname)); // Store file with unique name
-    }
-});
-
-const upload = multer({ storage: storage });
-
-export function postUser(req, res) {
-    const user = req.body;
-    const password = req.body.password;
+export async function postUser(req, res) {
+    const { name, email, whatsapp, firstName, lastName, phone, password } = req.body;
+    /*  const user = req.body;
+    const password = req.body.password;  */
     const saltRound = 10;
-    const passwordHash = bcrypt.hashSync(password, saltRound);
-    
+   
 
-    user.password = passwordHash;
+    try{
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
+        }
+        
+        const passwordHash = bcrypt.hashSync(password, saltRound);
 
-    if (req.file) {
-        user.profilePic = req.file.path; // Save the profile picture path
-    }
+    /* user.password = passwordHash; */
 
+        const newUser = new User({
+        name,
+        email,
+        whatsapp,
+            password: passwordHash,
+            firstName, // Include this field
+            lastName,  // Include this field
+            phone,  
+    })
 
-    const newUser = new User(user)
-
-    newUser.save().then(() => {
+        await newUser.save()
+        console.log("Received data:", req.body);
         
         res.status(201).json({ message: "User created successfully!" });
-    }).catch((error) => {
+    }catch(error)  {
         res.status(500).json({ message: "Error creating user!" ,error: error.message });
-    })
+    }
+   
 }
 
 export function login(req, res) {
