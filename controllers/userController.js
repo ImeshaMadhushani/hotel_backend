@@ -72,7 +72,19 @@ export function login(req, res) {
     });
 }
 
-export function isAdminValid(req){
+export function isAdminValid(req) {
+   /*  const token = req.headers['authorization']?.split(' ')[1]; // Extract JWT token from the Authorization header
+
+    if (!token) {
+        return false; // No token provided
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_KEY); // Verify JWT token
+        return decoded.type === 'admin'; // Check if the user is an admin
+    } catch (error) {
+        return false; // Invalid token
+    } */
     if (req.user == null) { 
         return false;
     }
@@ -81,7 +93,7 @@ export function isAdminValid(req){
         return false;
     }
     
-    return true;
+    return true; 
 }
 
 export function isCustomerValid(req) {
@@ -89,13 +101,14 @@ export function isCustomerValid(req) {
         return false;
     }
     
-    if (req.user.type!= "customer") {
+    if (req.user.type == "customer") {
         return false;
     }
     
     return true;
 }
  
+//error
 export function getUser(req, res) {
     const user = req.body.user;
     if (user == null) {
@@ -104,4 +117,12 @@ export function getUser(req, res) {
     else {
         res.json({ message:"Found",user: user });
     }
+}
+
+export function getAllUsers(req, res) {
+    User.find().then((users) => {
+        res.json({ message: "Users fetched successfully!", users: users });
+    }).catch((error) => {
+        res.status(500).json({ message: "Error fetching users!", error: error.message });
+    });
 }

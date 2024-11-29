@@ -26,6 +26,7 @@ const categorySchema = mongoose.Schema(
 
         image: {
             type: String,
+            default: "" // Default value for image if not provided
 
         }
 

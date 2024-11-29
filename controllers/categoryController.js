@@ -1,5 +1,5 @@
 import Category from "../models/categoryModel.js";
-
+import { isAdminValid } from "./userController.js";
 export function createCategory(req, res) {
     const user = req.user;
 
@@ -24,6 +24,7 @@ export function createCategory(req, res) {
 }
 
 export function deleteCategory(req, res) { 
+    const user = req.user;
      if (user == null) {
         return res.status(400).json({ message: "Invalid user data!" });
         return;
@@ -36,8 +37,8 @@ export function deleteCategory(req, res) {
     } 
     
 
-    const name = req.params.name;
-    Category.findOneAndDelete({ name: name }).then((result) => { 
+    const { name } = req.params;
+    Category.findOneAndDelete({ name }).then((result) => { 
         if (!result) {
             return res.status(404).json({ message: "Category not found!" });
         }
@@ -77,9 +78,9 @@ export function updateCategory(req, res) {
         return;
     }
 
-    const name = req.param.name;
+    const id = req.param.id;
 
-    Category.updateOne({ name: name }, req.body).then(
+    Category.updateOne({ id: id }, req.body).then(
         () => {
             res.json({
                 message: "Category updated successfully"

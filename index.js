@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(cors({
     origin: 'http://localhost:5173', // Allow your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    credentials: true
 }));
 
 
@@ -32,6 +33,13 @@ app.use((req, res, next) => {
     if (token) {
         jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
             if (err) {
+                if (err.name === "TokenExpiredError") {
+                    console.warn("Token has expired:", err.expiredAt); // Debugging log
+                    return res.status(401).json({
+                        message: "Session expired. Please log in again.",
+                        error: err.message,
+                    });
+                }
                 console.error("Token verification error:", err);
                 return res.status(401).json({ message: "Invalid token, please login again", error: err.message });
             }
@@ -50,6 +58,7 @@ app.use("/api/gallery", galleryRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/rooms", roomRouter)
 app.use("/api/booking", bookingRouter)
+
 
 
 // Connect to MongoDB
