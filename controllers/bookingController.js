@@ -32,7 +32,9 @@ export function createBooking(req, res) {
 
     const startingId = 1000;
 
-    Booking.countDocuments({}).then(
+    // Fetch the latest bookingId to avoid duplication
+
+     Booking.countDocuments({}).then(
         (count) => {
             console.log(count);
             const newId = startingId + count + 1;
@@ -72,8 +74,7 @@ export function createBooking(req, res) {
             })
         }
     )
-
-    
+ 
 }
 
 
