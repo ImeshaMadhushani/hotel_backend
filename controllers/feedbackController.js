@@ -40,7 +40,41 @@ export async function getAllFeedback(req, res) {
 }
 
 // Approve feedback (admin only)
+
+// Approve or disapprove feedback (admin only)
 export async function updateFeedback(req, res) {
+    const { id } = req.params; // Feedback ID from the request params
+    const { approved } = req.body; // Get the approval status from the request body
+
+    if (approved === undefined) {
+        return res.status(400).json({ message: "Approval status (approved) is required." });
+    }
+
+    try {
+        const isAdmin = await isAdminValid(req);
+
+        if (!isAdmin) {
+            return res.status(403).json({ message: "Access denied. Admins only." });
+        }
+
+        // Update the feedback status (approve or disapprove)
+        const updatedFeedback = await Feedback.findByIdAndUpdate(
+            id,
+            { approved }, // Update the 'approved' field with the value passed in the request
+            { new: true }
+        );
+
+        if (!updatedFeedback) {
+            return res.status(404).json({ message: "Feedback not found." });
+        }
+
+        res.json({ message: `Feedback ${approved ? "approved" : "disapproved"} successfully!`, feedback: updatedFeedback });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating feedback.", error: error.message });
+    }
+}
+
+/* export async function updateFeedback(req, res) {
     const { id } = req.params; // Feedback ID from the request params
 
     try {
@@ -65,7 +99,7 @@ export async function updateFeedback(req, res) {
         res.status(500).json({ message: "Error updating feedback.", error: error.message });
     }
 }
-
+ */
 // Delete feedback (admin only)
 export async function deleteFeedback(req, res) {
     const { id } = req.params; // Feedback ID from the request params

@@ -30,14 +30,18 @@ export function createBooking(req, res) {
         });
     }
 
-    const startingId = 1000;
+    //const startingId = 1000;
 
     // Fetch the latest bookingId to avoid duplication
 
-     Booking.countDocuments({}).then(
+    /*  Booking.countDocuments({}).then(
         (count) => {
-            console.log(count);
-            const newId = startingId + count + 1;
+             console.log(count); */
+    // Generate a new bookingId based on the latest bookingId
+    Booking.findOne().sort({ bookingId: -1 }).limit(1)
+        .then((latestBooking) => {
+            const newId = latestBooking ? latestBooking.bookingId + 1 : 1001;
+           //const newId = startingId + count + 1;
             const newBooking = new Booking({
                 bookingId: newId,
                 roomId: roomId,
@@ -67,7 +71,7 @@ export function createBooking(req, res) {
         }
     ).catch(
         (err) => {
-            
+            console.error("Error fetching the latest booking:", err);
             res.status(500).json({
                 message: "Failed to fetch booking count",
                 error: err
