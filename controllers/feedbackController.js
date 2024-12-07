@@ -1,6 +1,6 @@
 import Feedback from "../models/feedbackModel.js";
 import { isAdminValid } from "./userController.js"; // Import isAdminValid function
-
+import User from "../models/userModel.js";
 // Create feedback
 export const createFeedback = async (req, res) => {
     try {
@@ -29,27 +29,10 @@ export const createFeedback = async (req, res) => {
     }
 };
 
-/* export async function createFeedback(req, res) {
-    const { userId, message, rating } = req.body;
-
-    try {
-        const feedback = new Feedback({
-            userId,
-            message,
-            rating,
-        });
-
-        const savedFeedback = await feedback.save();
-        res.status(201).json({ message: "Feedback submitted successfully!", feedback: savedFeedback });
-    } catch (error) {
-        res.status(500).json({ message: "Error submitting feedback.", error: error.message });
-    }
-} */
-
 // Get all feedback
 export async function getAllFeedback(req, res) {
     try {
-        const feedbacks = await Feedback.find();
+        const feedbacks = await Feedback.find().populate({ path: "user", select: "firstName lastName email" });
         res.json({ message: "Feedback fetched successfully!", feedbacks });
     } catch (error) {
         res.status(500).json({ message: "Error fetching feedback.", error: error.message });
@@ -69,7 +52,7 @@ export async function updateFeedback(req, res) {
 
         const updatedFeedback = await Feedback.findByIdAndUpdate(
             id,
-            { approved: true },
+            { approved: true }, // Assuming 'approved' is a field in the feedback schema
             { new: true }
         );
 
