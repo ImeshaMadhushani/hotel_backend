@@ -7,8 +7,10 @@ import galleryRouter from './routes/galleryRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
 import roomRouter from './routes/roomRoute.js';
 import bookingRouter from './routes/bookingRoute.js';
+
 import dotenv from 'dotenv';
 import cors from 'cors';
+import feedbackRouter from './routes/feedbackRoute.js';
 
 dotenv.config();
 
@@ -58,6 +60,8 @@ app.use("/api/gallery", galleryRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/rooms", roomRouter)
 app.use("/api/booking", bookingRouter)
+app.use("/api/feedback", feedbackRouter);
+
 
 
 
